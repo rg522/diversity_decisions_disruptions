@@ -7,7 +7,7 @@ import numpy as np
 # 2 for quadrant 2 (change to fidelity and location of high value)
 # 3 for quadrant 3 (change to fidelity and available options)
 # 4 for quadrant 4 (change to fidelity, location of high value, and available options)
-d_type = 4
+d_type = 3
 
 # Location of V_H (True for Right, False for Left)
 #V_H_location = random.choice([True, False])  # Randomly choose for simulation
@@ -233,7 +233,7 @@ average_capability_cL = []
 average_capability_cR = []
 average_capability_cL_outsider = []
 average_capability_cR_outsider = []
-xi = xi_base
+
 
 for simulation in range(num_simulations):
     # Resetting variables for each simulation run
@@ -254,6 +254,7 @@ for simulation in range(num_simulations):
     cr_history_outsider = []
     cl_history_outsider = []
     time_insider = []
+    xi = xi_base
 
     # Simulation loop
     for current_period in range(1, big_t):
