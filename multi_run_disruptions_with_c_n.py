@@ -3,27 +3,28 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 #set disruption type:
-# 1 for quadrant 1 (change to fidelity only)
-# 2 for quadrant 2 (change to fidelity and location of high value)
-# 3 for quadrant 3 (change to fidelity and available options)
-# 4 for quadrant 4 (change to fidelity, location of high value, and available options)
-d_type = 3
+# 1 for quadrant 1 (change to fidelity only)  [[Insider Better]]
+# 2 for quadrant 2 (change to fidelity and location of high value) [[Outsider Better]]
+# 3 for quadrant 3 (change to fidelity and available options) [[Insider Better]]
+# 4 for quadrant 4 (change to fidelity, location of high value, and available options)  [[Outsider Better]
+d_type = 2
 
 # Location of V_H (True for Right, False for Left)
-#V_H_location = random.choice([True, False])  # Randomly choose for simulation
-#or choose manually:
-V_H_location = False #for left
-#V_H_location = True #for right
+# V_H_location = random.choice([True, False])  # Randomly choose for simulation
+# or choose manually:
+V_H_location = False # for left
+# V_H_location = True # for right
+V_H_location_base = V_H_location # for use in reset
 
 #number of periods:
-big_t = 1000
-t_D = 300
-num_simulations = 1000
+big_t = 2000
+t_D = 300 #disruption at
+num_simulations = 10
 
 # Learning Parameters
 V_H = 1  # Value for high
 V_L = 0  # Value for low
-xi = 0.20 # Fidelity - (Probability of receiving the opposite signal)
+xi = 0.10 # Fidelity - (Probability of receiving the opposite signal)
 xi_base = xi
 C_L_0 = 1  # Initial capability for Left
 C_R_0 = 1  # Initial capability for Right
@@ -255,7 +256,8 @@ for simulation in range(num_simulations):
     cl_history_outsider = []
     time_insider = []
     xi = xi_base
-
+    V_H_location = V_H_location_base
+    print(V_H_location)
     # Simulation loop
     for current_period in range(1, big_t):
         if current_period < t_D:
@@ -263,6 +265,7 @@ for simulation in range(num_simulations):
         else:
             if current_period == t_D:
                 apply_disruption()
+                print(V_H_location)
             simulate_decision_insider(current_period)
             simulate_decision_outsider(current_period)
 
@@ -320,7 +323,7 @@ time_insider = np.arange(1, big_t )
 time_outsider = np.arange(t_D, big_t)
 
 # Print a statement that summarizes the loss due to an outsider
-dif = profit_history[big_t - 2] - profit_history_outsider[(big_t - t_D - 1)] - profit_history[t_D-1]
+dif = average_profit_history[big_t - 2] - average_profit_history_outsider[(big_t - t_D - 1)] - average_profit_history[t_D-1]
 print("cumulative insider advantage = {}".format(dif))
 
 # Plotting the beliefs over time
