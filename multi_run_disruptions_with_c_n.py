@@ -16,19 +16,20 @@ V_H_location = False # for left
 # V_H_location = True # for right
 V_H_location_base = V_H_location # for use in reset
 
-#number of periods:
+## Time Parameters
+# number of periods:
 big_t = 2000
-t_D = 300 #disruption at
+t_D = 500 #disruption at
 num_simulations = 10
 
 # Learning Parameters
 V_H = 1  # Value for high
 V_L = 0  # Value for low
-xi = 0.10 # Fidelity - (Probability of receiving the opposite signal)
+xi = 0.15 # Fidelity - (Probability of receiving the opposite signal)
 xi_base = xi
 C_L_0 = 1  # Initial capability for Left
 C_R_0 = 1  # Initial capability for Right
-delta = 5   # Difficulty in learning capability
+delta = 50   # Difficulty in learning capability
 
 #define the global variables
 V_H_new= V_L_new = 0
