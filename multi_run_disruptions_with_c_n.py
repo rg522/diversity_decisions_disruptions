@@ -91,6 +91,7 @@ C_R_outsider = C_R_0
 cumulative_profit_outsider = 0
 
 # Lists to track beliefs over time
+#Insider (Non-Random)
 pL_history = []
 pR_history = []
 profit_history = []
@@ -98,12 +99,30 @@ cr_history = []
 cl_history = []
 time_insider = []
 
+#Insider (Random)
+pL_history_rand = []
+pR_history_rand = []
+profit_history_rand = []
+cr_history_rand = []
+cl_history_rand = []
+time_insider_rand = []
+
+# Outsider (non-random)
 pL_history_outsider = []
 pR_history_outsider = []
 profit_history_outsider = []
 cr_history_outsider = []
 cl_history_outsider = []
 time_outsider = []
+
+# Outsider (Random)
+pL_history_outsider_rand  = []
+pR_history_outsider_rand  = []
+profit_history_outsider_rand  = []
+cr_history_outsider_rand  = []
+cl_history_outsider_rand  = []
+time_outsider_rand  = []
+
 
 # Function to simulate one decision period
 def simulate_decision_insider_randomizer(t):
@@ -114,8 +133,8 @@ def simulate_decision_insider_randomizer(t):
     pR = nR_s / nR_belief if nR_belief > 0 else 0.5
 
     # Store the probabilities
-    pL_history.append(pL)
-    pR_history.append(pR)
+    pL_history_rand.append(pL)
+    pR_history_rand.append(pR)
 
     # Calculate probabilities for decision making
     P_L_greater_R = (nL_s + nR_belief - nR_s) / (nR_belief + nL_belief) if (nR_belief + nL_belief) > 0 else 0.5
@@ -147,18 +166,18 @@ def simulate_decision_insider_randomizer(t):
 
 
     cumulative_profit += profit
-    profit_history.append(cumulative_profit)
+    profit_history_rand.append(cumulative_profit)
 
 
-    time_insider.append(t)
+    time_insider_rand.append(t)
 
     # Fix initiation issues
     C_L = 0 if nL_capability == 0 else C_L
     C_R = 0 if nR_capability == 0 else C_R
 
 
-    cl_history.append(C_L)
-    cr_history.append(C_R)
+    cl_history_rand.append(C_L)
+    cr_history_rand.append(C_R)
 
 def simulate_decision_insider(t):
     global nL_s, nL_belief, nR_s, nR_belief, nL_capability, nR_capability, C_L, C_R, cumulative_profit
@@ -220,8 +239,8 @@ def simulate_decision_outsider_randomizer(t):
     pR = nR_s_outsider / nR_belief_outsider if nR_belief_outsider > 0 else 0.5
 
     # Store the probabilities
-    pL_history_outsider.append(pL)
-    pR_history_outsider.append(pR)
+    pL_history_outsider_rand.append(pL)
+    pR_history_outsider_rand.append(pR)
 
     # Calculate probabilities for decision making
     P_L_greater_R = (nL_s_outsider + nR_belief_outsider - nR_s_outsider) / (nR_belief_outsider + nL_belief_outsider) if (nR_belief_outsider + nL_belief_outsider) > 0 else 0.5
@@ -252,13 +271,13 @@ def simulate_decision_outsider_randomizer(t):
 
 
     cumulative_profit_outsider += profit
-    profit_history_outsider.append(cumulative_profit_outsider)
+    profit_history_outsider_rand.append(cumulative_profit_outsider)
 
     time = t
-    time_outsider.append(time)
+    time_outsider_rand.append(time)
 
-    cl_history_outsider.append(C_L_outsider)
-    cr_history_outsider.append(C_R_outsider)
+    cl_history_outsider_rand.append(C_L_outsider)
+    cr_history_outsider_rand.append(C_R_outsider)
 
 def simulate_decision_outsider(t):
     global nL_s_outsider, nL_belief_outsider, nR_s_outsider, nR_belief_outsider, nL_capability_outsider, nR_capability_outsider, C_L_outsider, C_R_outsider, cumulative_profit_outsider
@@ -367,62 +386,95 @@ for simulation in range(num_simulations):
     for current_period in range(1, big_t):
         if current_period < t_D:
             simulate_decision_insider(current_period)
-
+            simulate_decision_insider_randomizer(current_period)
         else:
             if current_period == t_D:
                 apply_disruption()
                 #print(V_H_location)
             simulate_decision_insider(current_period)
+            simulate_decision_insider_randomizer(current_period)
             simulate_decision_outsider(current_period)
+            simulate_decision_outsider_randomizer(current_period)
 
     # Aggregating results
     if average_profit_history is None:
         # profits:
         average_profit_history = np.array(profit_history)
         average_profit_history_outsider = np.array(profit_history_outsider)
+        average_profit_history_rand = np.array(profit_history_rand)
+        average_profit_history_outsider_rand = np.array(profit_history_outsider_rand)
 
         average_belief_pL = np.array(pL_history)
         average_belief_pR = np.array(pR_history)
         average_belief_pL_outsider = np.array(pL_history_outsider)
         average_belief_pR_outsider = np.array(pR_history_outsider)
+        average_belief_pL_rand = np.array(pL_history_rand)
+        average_belief_pR_rand = np.array(pR_history_rand)
+        average_belief_pL_outsider_rand = np.array(pL_history_outsider_rand)
+        average_belief_pR_outsider_rand = np.array(pR_history_outsider_rand)
 
         average_capability_cL = np.array(cl_history)
         average_capability_cR = np.array(cr_history)
         average_capability_cL_outsider = np.array(cl_history_outsider)
         average_capability_cR_outsider = np.array(cr_history_outsider)
+        average_capability_cL_rand = np.array(cl_history_rand)
+        average_capability_cR_rand = np.array(cr_history_rand)
+        average_capability_cL_outsider_rand = np.array(cl_history_outsider_rand)
+        average_capability_cR_outsider_rand = np.array(cr_history_outsider_rand)
     else:
         # profits:
         average_profit_history += np.array(profit_history)
         average_profit_history_outsider += np.array(profit_history_outsider)
+        average_profit_history_rand += np.array(profit_history_rand)
+        average_profit_history_outsider_rand += np.array(profit_history_outsider_rand)
 
         average_belief_pL += np.array(pL_history)
         average_belief_pR += np.array(pR_history)
         average_belief_pL_outsider += np.array(pL_history_outsider)
         average_belief_pR_outsider += np.array(pR_history_outsider)
+        average_belief_pL_rand += np.array(pL_history_rand)
+        average_belief_pR_rand += np.array(pR_history_rand)
+        average_belief_pL_outsider_rand += np.array(pL_history_outsider_rand)
+        average_belief_pR_outsider_rand += np.array(pR_history_outsider_rand)
 
 
         average_capability_cL += np.array(cl_history)
         average_capability_cR += np.array(cr_history)
         average_capability_cL_outsider += np.array(cl_history_outsider)
         average_capability_cR_outsider += np.array(cr_history_outsider)
+        average_capability_cL_rand += np.array(cl_history_rand)
+        average_capability_cR_rand += np.array(cr_history_rand)
+        average_capability_cL_outsider_rand += np.array(cl_history_outsider_rand)
+        average_capability_cR_outsider_rand += np.array(cr_history_outsider_rand)
 
 # Averaging the results
 
 # Profits:
 average_profit_history /= num_simulations
 average_profit_history_outsider /= num_simulations
+average_profit_history_rand /= num_simulations
+average_profit_history_outsider_rand /= num_simulations
+
 
 # Beliefs:
 average_belief_pL /= num_simulations
 average_belief_pR /= num_simulations
 average_belief_pL_outsider /= num_simulations
 average_belief_pR_outsider /= num_simulations
+average_belief_pL_rand /= num_simulations
+average_belief_pR_rand /= num_simulations
+average_belief_pL_outsider_rand /= num_simulations
+average_belief_pR_outsider_rand /= num_simulations
 
 # Capabilities:
 average_capability_cL /= num_simulations
 average_capability_cR /= num_simulations
 average_capability_cL_outsider /= num_simulations
 average_capability_cR_outsider /= num_simulations
+average_capability_cL_rand /= num_simulations
+average_capability_cR_rand /= num_simulations
+average_capability_cL_outsider_rand /= num_simulations
+average_capability_cR_outsider_rand /= num_simulations
 
 # defining time for plotting
 time_insider = np.arange(1, big_t )
@@ -434,10 +486,19 @@ print("cumulative insider advantage = {}".format(dif))
 
 # Plotting the beliefs over time
 plt.rcParams["figure.figsize"] = (10,5)
+
+#Lines to plot the non-random insider
 plt.plot(time_insider,average_belief_pL, label='Belief in Left INSIDER (pL)', color = "black", linestyle = "--")
 plt.plot(time_insider,average_belief_pR, label='Belief in Right INSIDER(pR)', color = "black")
+
+# line to plot the non-random outsider
 plt.plot(time_outsider,average_belief_pL_outsider, label='Belief in Left OUTSIDER (pL)', color = "green", linestyle = "--")
 plt.plot(time_outsider,average_belief_pR_outsider, label='Belief in Right OUTSIDER (pR)', color = "green")
+
+# lines to plot the random insider
+plt.plot(time_insider,average_belief_pL_rand, label='Belief in Left RAND INSIDER (pL)', color = "red", linestyle = "--")
+plt.plot(time_insider,average_belief_pR_rand, label='Belief in Right RAND INSIDER(pR)', color = "red")
+
 plt.axvline(t_D, color = "red", linestyle = "-.")
 plt.xlabel('Time Periods')
 plt.ylabel('Belief Probability')
