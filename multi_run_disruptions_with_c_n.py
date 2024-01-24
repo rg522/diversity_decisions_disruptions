@@ -68,7 +68,7 @@ def set_d_type(d_type):
 
 set_d_type(d_type)
 
-# Initialize counters for insider
+# Initialize counters for insider (non-random)
 nL_s = 0  # Successful Left trials
 nL_belief = 0 # counter for the number of times left chosen
 nL_capability = 0 # Total Left trials
@@ -79,7 +79,18 @@ C_L = C_L_0 # Left capability
 C_R = C_R_0 # right capability
 cumulative_profit= 0 # profit from decisions
 
-# Initialize variables for the outsider
+# Initialize counters for insider (random)
+nL_s_rand = 0  # Successful Left trials
+nL_belief_rand = 0 # counter for the number of times left chosen
+nL_capability_rand = 0 # Total Left trials
+nR_s_rand = 0  # Successful Right trials
+nR_belief_rand = 0 # counter for the number of times right chosen
+nR_capability_rand = 0# Total Right trials
+C_L_rand = C_L_0 # Left capability
+C_R_rand = C_R_0 # right capability
+cumulative_profit_rand = 0 # profit from decisions
+
+# Initialize variables for the outsider (non-random)
 nL_s_outsider = 0
 nL_belief_outsider = 0
 nL_capability_outsider = 0
@@ -89,6 +100,17 @@ nR_capability_outsider = 0
 C_L_outsider = C_L_0
 C_R_outsider = C_R_0
 cumulative_profit_outsider = 0
+
+# Initialize variables for the outsider (random)
+nL_s_outsider_rand = 0
+nL_belief_outsider_rand = 0
+nL_capability_outsider_rand = 0
+nR_s_outsider_rand = 0
+nR_belief_outsider_rand = 0
+nR_capability_outsider_rand = 0
+C_L_outsider_rand = C_L_0
+C_R_outside_rand = C_R_0
+cumulative_profit_outsider_rand = 0
 
 # Lists to track beliefs over time
 #Insider (Non-Random)
@@ -126,69 +148,69 @@ time_outsider_rand  = []
 
 # Function to simulate one decision period
 def simulate_decision_insider_randomizer(t):
-    global nL_s, nL_belief, nR_s, nR_belief, nL_capability, nR_capability, C_L, C_R, cumulative_profit
+    global nL_s_rand, nL_belief_rand, nR_s_rand, nR_belief_rand, nL_capability_rand, nR_capability_rand, C_L_rand, C_R_rand, cumulative_profit_rand
 
     # Agent's belief about success probabilities (using belief counters)
-    pL = nL_s / nL_belief if nL_belief > 0 else 0.5  # Avoid division by zero (assume no preference when n = 0)
-    pR = nR_s / nR_belief if nR_belief > 0 else 0.5
+    pL_rand = nL_s_rand / nL_belief_rand if nL_belief_rand > 0 else 0.5  # Avoid division by zero (assume no preference when n = 0)
+    pR_rand = nR_s_rand / nR_belief_rand if nR_belief_rand > 0 else 0.5
 
     # Store the probabilities
-    pL_history_rand.append(pL)
-    pR_history_rand.append(pR)
+    pL_history_rand.append(pL_rand)
+    pR_history_rand.append(pR_rand)
 
     # Calculate probabilities for decision making
-    P_L_greater_R = (nL_s + nR_belief - nR_s) / (nR_belief + nL_belief) if (nR_belief + nL_belief) > 0 else 0.5
-    P_R_greater_L = (nR_s + nL_belief - nL_s) / (nR_belief + nL_belief) if (nR_belief + nL_belief) > 0 else 0.5
+    P_L_greater_R_rand = (nL_s_rand + nR_belief_rand - nR_s_rand) / (nR_belief_rand + nL_belief_rand) if (nR_belief_rand + nL_belief_rand) > 0 else 0.5
+    P_R_greater_L = (nR_s_rand + nL_belief_rand - nL_s_rand) / (nR_belief_rand + nL_belief_rand) if (nR_belief_rand + nL_belief_rand) > 0 else 0.5
 
     # Agent makes a decision
     import random
     threshold = random.random()
-    decision = 'L' if P_L_greater_R >  threshold else 'R'
+    decision = 'L' if P_L_greater_R_rand >  threshold else 'R'
     #decision = 'L' if P_L_greater_R > P_R_greater_L else 'R'
 
     #Capability
-    C_L = C_L_0 - delta_in*C_L_0 / (delta_in + nL_capability)
-    C_R = C_R_0 - delta_in*C_R_0 / (delta_in + nR_capability)
+    C_L_rand = C_L_0 - delta_in*C_L_0 / (delta_in + nL_capability_rand)
+    C_R_rand = C_R_0 - delta_in*C_R_0 / (delta_in + nR_capability_rand)
 
     # Determine actual outcome, update capabilities and profit
     if decision == 'L':
-        nL_belief += 1
-        nL_capability += 1
-        profit = V_H - (1/(C_L+1)) if (random.random() > xi and not V_H_location) or (random.random() <= xi and V_H_location) else V_L - (1/(C_L+1))
+        nL_belief_rand += 1
+        nL_capability_rand += 1
+        profit = V_H - (1/(C_L_rand+1)) if (random.random() > xi and not V_H_location) or (random.random() <= xi and V_H_location) else V_L - (1/(C_L_rand+1))
         if (random.random() > xi and not V_H_location) or (random.random() <= xi and V_H_location):
-            nL_s += 1
+            nL_s_rand += 1
     else:
-        nR_belief += 1
-        nR_capability += 1
-        profit = V_H - (1/(C_R+1)) if (random.random() > xi and V_H_location) or (random.random() <= xi and not V_H_location) else V_L - (1/(C_R+1))
+        nR_belief_rand += 1
+        nR_capability_rand += 1
+        profit = V_H - (1/(C_R_rand+1)) if (random.random() > xi and V_H_location) or (random.random() <= xi and not V_H_location) else V_L - (1/(C_R_rand+1))
         if (random.random() > xi and V_H_location) or (random.random() <= xi and not V_H_location):
-            nR_s += 1
+            nR_s_rand += 1
 
 
-    cumulative_profit += profit
-    profit_history_rand.append(cumulative_profit)
+    cumulative_profit_rand += profit
+    profit_history_rand.append(cumulative_profit_rand)
 
 
     time_insider_rand.append(t)
 
     # Fix initiation issues
-    C_L = 0 if nL_capability == 0 else C_L
-    C_R = 0 if nR_capability == 0 else C_R
+    C_L_rand = 0 if nL_capability == 0 else C_L_rand
+    C_R_rand = 0 if nR_capability == 0 else C_R_rand
 
 
-    cl_history_rand.append(C_L)
-    cr_history_rand.append(C_R)
+    cl_history_rand.append(C_L_rand)
+    cr_history_rand.append(C_R_rand)
 
 def simulate_decision_insider(t):
     global nL_s, nL_belief, nR_s, nR_belief, nL_capability, nR_capability, C_L, C_R, cumulative_profit
 
     # Agent's belief about success probabilities (using belief counters)
-    pL = nL_s / nL_belief if nL_belief > 0 else 0.5  # Avoid division by zero (assume no preference when n = 0)
-    pR = nR_s / nR_belief if nR_belief > 0 else 0.5
+    pL_in = nL_s / nL_belief if nL_belief > 0 else 0.5  # Avoid division by zero (assume no preference when n = 0)
+    pR_in = nR_s / nR_belief if nR_belief > 0 else 0.5
 
     # Store the probabilities
-    pL_history.append(pL)
-    pR_history.append(pR)
+    pL_history.append(pL_in)
+    pR_history.append(pR_in)
 
     # Calculate probabilities for decision making
     P_L_greater_R = (nL_s + nR_belief - nR_s) / (nR_belief + nL_belief) if (nR_belief + nL_belief) > 0 else 0.5
@@ -232,63 +254,63 @@ def simulate_decision_insider(t):
 
 
 def simulate_decision_outsider_randomizer(t):
-    global nL_s_outsider, nL_belief_outsider, nR_s_outsider, nR_belief_outsider, nL_capability_outsider, nR_capability_outsider, C_L_outsider, C_R_outsider, cumulative_profit_outsider
+    global nL_s_outsider_rand, nL_belief_outsider_rand, nR_s_outsider_rand, nR_belief_outsider_rand, nL_capability_outsider_rand, nR_capability_outsider_rand, C_L_outsider_rand, C_R_outsider_rand, cumulative_profit_outsider_rand
 
     # Agent's belief about success probabilities (using belief counters)
-    pL = nL_s_outsider / nL_belief_outsider if nL_belief_outsider > 0 else 0.5  # Avoid division by zero
-    pR = nR_s_outsider / nR_belief_outsider if nR_belief_outsider > 0 else 0.5
+    pL_out_rand = nL_s_outsider_rand / nL_belief_outsider_rand if nL_belief_outsider_rand > 0 else 0.5  # Avoid division by zero
+    pR_out_rand = nR_s_outsider_rand / nR_belief_outsider_rand if nR_belief_outsider_rand > 0 else 0.5
 
     # Store the probabilities
-    pL_history_outsider_rand.append(pL)
-    pR_history_outsider_rand.append(pR)
+    pL_history_outsider_rand.append(pL_out_rand)
+    pR_history_outsider_rand.append(pR_out_rand)
 
     # Calculate probabilities for decision making
-    P_L_greater_R = (nL_s_outsider + nR_belief_outsider - nR_s_outsider) / (nR_belief_outsider + nL_belief_outsider) if (nR_belief_outsider + nL_belief_outsider) > 0 else 0.5
-    P_R_greater_L = (nR_s_outsider + nL_belief_outsider - nL_s_outsider) / (nR_belief_outsider + nL_belief_outsider) if (nR_belief_outsider + nL_belief_outsider) > 0 else 0.5
+    P_L_greater_R_out_rand = (nL_s_outsider_rand + nR_belief_outsider_rand - nR_s_outsider_rand) / (nR_belief_outsider_rand + nL_belief_outsider_rand) if (nR_belief_outsider_rand + nL_belief_outsider_rand) > 0 else 0.5
+    P_R_greater_L = (nR_s_outsider_rand + nL_belief_outsider_rand - nL_s_outsider_rand) / (nR_belief_outsider_rand + nL_belief_outsider_rand) if (nR_belief_outsider_rand + nL_belief_outsider_rand) > 0 else 0.5
 
     # Agent makes a decision
-    threshold =  random.random()
-    decision = 'L' if P_L_greater_R > threshold else 'R'
+    threshold = random.random()
+    decision = 'L' if P_L_greater_R_out_rand > threshold else 'R'
 
     #Capability
-    C_L_outsider = C_L_0 - delta_out*C_L_0 / (delta_out + nL_capability_outsider)
-    C_R_outsider = C_R_0 - delta_out*C_L_0 / (delta_out + nR_capability_outsider)
+    C_L_outsider_rand = C_L_0 - delta_out*C_L_0 / (delta_out + nL_capability_outsider_rand)
+    C_R_outsider_rand = C_R_0 - delta_out*C_L_0 / (delta_out + nR_capability_outsider_rand)
 
     # Determine actual outcome, update capabilities and profit
     if decision == 'L':
-        nL_belief_outsider += 1
-        nL_capability_outsider += 1
-        profit = V_H - (1/(C_L_outsider+1)) if (random.random() > xi and not V_H_location) or (random.random() <= xi and V_H_location) else V_L - (1/(C_L_outsider+1))
+        nL_belief_outsider_rand += 1
+        nL_capability_outsider_rand += 1
+        profit = V_H - (1/(C_L_outsider_rand+1)) if (random.random() > xi and not V_H_location) or (random.random() <= xi and V_H_location) else V_L - (1/(C_L_outsider_rand+1))
         if (random.random() > xi and not V_H_location) or (random.random() <= xi and V_H_location):
-            nL_s_outsider += 1
+            nL_s_outsider_rand += 1
     else:
 
-        nR_belief_outsider += 1
-        nR_capability_outsider += 1
-        profit = V_H - (1/(C_R_outsider+1)) if (random.random() > xi and V_H_location) or (random.random() <= xi and not V_H_location) else V_L - (1/(C_R_outsider+1))
+        nR_belief_outsider_rand += 1
+        nR_capability_outsider_rand += 1
+        profit = V_H - (1/(C_R_outsider_rand+1)) if (random.random() > xi and V_H_location) or (random.random() <= xi and not V_H_location) else V_L - (1/(C_R_outsider_rand+1))
         if (random.random() > xi and V_H_location) or (random.random() <= xi and not V_H_location):
-            nR_s_outsider += 1
+            nR_s_outsider_rand += 1
 
 
-    cumulative_profit_outsider += profit
-    profit_history_outsider_rand.append(cumulative_profit_outsider)
+    cumulative_profit_outsider_rand += profit
+    profit_history_outsider_rand.append(cumulative_profit_outsider_rand)
 
     time = t
     time_outsider_rand.append(time)
 
-    cl_history_outsider_rand.append(C_L_outsider)
-    cr_history_outsider_rand.append(C_R_outsider)
+    cl_history_outsider_rand.append(C_L_outsider_rand)
+    cr_history_outsider_rand.append(C_R_outsider_rand)
 
 def simulate_decision_outsider(t):
     global nL_s_outsider, nL_belief_outsider, nR_s_outsider, nR_belief_outsider, nL_capability_outsider, nR_capability_outsider, C_L_outsider, C_R_outsider, cumulative_profit_outsider
 
     # Agent's belief about success probabilities (using belief counters)
-    pL = nL_s_outsider / nL_belief_outsider if nL_belief_outsider > 0 else 0.5  # Avoid division by zero
-    pR = nR_s_outsider / nR_belief_outsider if nR_belief_outsider > 0 else 0.5
+    pL_out = nL_s_outsider / nL_belief_outsider if nL_belief_outsider > 0 else 0.5  # Avoid division by zero
+    pR_out = nR_s_outsider / nR_belief_outsider if nR_belief_outsider > 0 else 0.5
 
     # Store the probabilities
-    pL_history_outsider.append(pL)
-    pR_history_outsider.append(pR)
+    pL_history_outsider.append(pL_out)
+    pR_history_outsider.append(pR_out)
 
     # Calculate probabilities for decision making
     P_L_greater_R = (nL_s_outsider + nR_belief_outsider - nR_s_outsider) / (nR_belief_outsider + nL_belief_outsider) if (nR_belief_outsider + nL_belief_outsider) > 0 else 0.5
@@ -421,31 +443,7 @@ for simulation in range(num_simulations):
         average_capability_cR_rand = np.array(cr_history_rand)
         average_capability_cL_outsider_rand = np.array(cl_history_outsider_rand)
         average_capability_cR_outsider_rand = np.array(cr_history_outsider_rand)
-    else:
-        # profits:
-        average_profit_history += np.array(profit_history)
-        average_profit_history_outsider += np.array(profit_history_outsider)
-        average_profit_history_rand += np.array(profit_history_rand)
-        average_profit_history_outsider_rand += np.array(profit_history_outsider_rand)
 
-        average_belief_pL += np.array(pL_history)
-        average_belief_pR += np.array(pR_history)
-        average_belief_pL_outsider += np.array(pL_history_outsider)
-        average_belief_pR_outsider += np.array(pR_history_outsider)
-        average_belief_pL_rand += np.array(pL_history_rand)
-        average_belief_pR_rand += np.array(pR_history_rand)
-        average_belief_pL_outsider_rand += np.array(pL_history_outsider_rand)
-        average_belief_pR_outsider_rand += np.array(pR_history_outsider_rand)
-
-
-        average_capability_cL += np.array(cl_history)
-        average_capability_cR += np.array(cr_history)
-        average_capability_cL_outsider += np.array(cl_history_outsider)
-        average_capability_cR_outsider += np.array(cr_history_outsider)
-        average_capability_cL_rand += np.array(cl_history_rand)
-        average_capability_cR_rand += np.array(cr_history_rand)
-        average_capability_cL_outsider_rand += np.array(cl_history_outsider_rand)
-        average_capability_cR_outsider_rand += np.array(cr_history_outsider_rand)
 
 # Averaging the results
 
@@ -492,8 +490,8 @@ plt.plot(time_insider,average_belief_pL, label='Belief in Left INSIDER (pL)', co
 plt.plot(time_insider,average_belief_pR, label='Belief in Right INSIDER(pR)', color = "black")
 
 # line to plot the non-random outsider
-plt.plot(time_outsider,average_belief_pL_outsider, label='Belief in Left OUTSIDER (pL)', color = "green", linestyle = "--")
-plt.plot(time_outsider,average_belief_pR_outsider, label='Belief in Right OUTSIDER (pR)', color = "green")
+#plt.plot(time_outsider,average_belief_pL_outsider, label='Belief in Left OUTSIDER (pL)', color = "green", linestyle = "--")
+#plt.plot(time_outsider,average_belief_pR_outsider, label='Belief in Right OUTSIDER (pR)', color = "green")
 
 # lines to plot the random insider
 plt.plot(time_insider,average_belief_pL_rand, label='Belief in Left RAND INSIDER (pL)', color = "red", linestyle = "--")
@@ -510,8 +508,13 @@ plt.show()
 # Plotting the Capability over time
 plt.plot(time_insider,cl_history, label='Capability in Left INSIDER (cL)', color = "black", linestyle = "--")
 plt.plot(time_insider,cr_history, label='Capability in Right INSIDER (cR)', color = "black")
-plt.plot(time_outsider,cl_history_outsider, label='Capability in Left OUTSIDER (cL)', color = "green", linestyle = "--")
-plt.plot(time_outsider,cr_history_outsider, label='Capability in Right OUTSIDER (cR)', color = "green")
+#plt.plot(time_outsider,cl_history_outsider, label='Capability in Left OUTSIDER (cL)', color = "green", linestyle = "--")
+#plt.plot(time_outsider,cr_history_outsider, label='Capability in Right OUTSIDER (cR)', color = "green")
+
+# lines to plot the random insider
+plt.plot(time_insider,cl_history_rand, label='Belief in Left RAND INSIDER (pL)', color = "red", linestyle = "--")
+plt.plot(time_insider,cr_history_rand, label='Belief in Right RAND INSIDER(pR)', color = "red")
+
 plt.xlabel('Time Periods')
 plt.ylabel('Capability')
 plt.title('Agent Capability Over Time with Fidelity = {}'.format(xi_base))
