@@ -1,0 +1,14 @@
+{
+    "V_H": 1,
+    "V_L": 0,
+    "xi": 0.1,
+    "C_L_0": 3,
+    "C_R_0": 3,
+    "delta_in": 100,
+    "delta_out": 1000,
+    "V_H_new": 0,
+    "V_L_new": 0,
+    "reset_cap_left": false,
+    "reset_cap_right": false,
+    "reset_location": false
+}
