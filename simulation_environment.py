@@ -135,6 +135,7 @@ class SimulationEnvironment:
             plt.xlabel('Time')
             plt.ylabel('Probability of High Value at This Location')
             plt.legend()
+            plt.grid()
             plt.show()
 
             # plotting beliefs over time
@@ -147,6 +148,7 @@ class SimulationEnvironment:
             plt.xlabel('Time')
             plt.ylabel('Probability of Better Value at This Location')
             plt.legend()
+            plt.grid()
             plt.show()
 
             # plotting capabilities over time
@@ -159,6 +161,7 @@ class SimulationEnvironment:
             plt.xlabel('Time')
             plt.ylabel('Capability in this Direction')
             plt.legend()
+            plt.grid()
             plt.show()
 
             # plotting the cumulative profit over time
@@ -169,6 +172,7 @@ class SimulationEnvironment:
             plt.xlabel('Time')
             plt.ylabel('Cumulative Profit')
             plt.legend()
+            plt.grid()
             plt.show()
 
         if self.analysis == 2:
@@ -182,6 +186,7 @@ class SimulationEnvironment:
             plt.xlabel('Time')
             plt.ylabel('Probability of High Value at This Location')
             plt.legend()
+            plt.grid()
             plt.show()
 
             # plotting BETTER beliefs over time
@@ -194,6 +199,7 @@ class SimulationEnvironment:
             plt.xlabel('Time')
             plt.ylabel('Probability of Better Value at This Location')
             plt.legend()
+            plt.grid()
             plt.show()
 
             # plotting capabilities over time
@@ -206,6 +212,7 @@ class SimulationEnvironment:
             plt.xlabel('Time')
             plt.ylabel('Capability in this Direction')
             plt.legend()
+            plt.grid()
             plt.show()
 
 
@@ -217,6 +224,7 @@ class SimulationEnvironment:
             plt.xlabel('Time')
             plt.ylabel('Cumulative Profit for Insiders: Random and Static')
             plt.legend()
+            plt.grid()
             plt.show()
 
 
